@@ -13,3 +13,6 @@ dump.bin
 
 __pycache__/
 *.pyc
+
+# окно наземной станции
+finds_viewer/

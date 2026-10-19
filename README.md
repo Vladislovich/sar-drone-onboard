@@ -102,6 +102,26 @@ mkdir -p ../finds ../queue
 ArduPilot - `cmake .. -DSAR_WITH_MAVLINK=ON`, предварительно склонировав
 `c_library_v2` в `third_party/mavlink`.
 
+## Запуск с USB-камерой и живым видео
+
+```sh
+./run_onboard.sh                                    # из корня репозитория
+CAMERA=/dev/v4l/by-id/usb-...-video-index0 ./run_onboard.sh
+```
+
+Скрипт собирает пайплайн (если ещё не собран) и запускает его с камерой,
+разведённой на две ветки: детекция и H.264-видео по TCP на порту 5000.
+Видео отдаёт сам дрон, ноутбук подключается к нему:
+
+```sh
+gst-launch-1.0 tcpclientsrc host=<IP платы> port=5000 ! matroskademux \
+    ! avdec_h264 ! videoconvert ! autovideosink sync=false
+```
+
+Находки с рамками приходят отдельно, на порт 5700 - их показывает
+`ground_viewer/viewer.py`. Запускать из корня, а не из `build/`: путь к
+модели в `main.cpp` относительный.
+
 ## Что настроить перед первым запуском
 
 В начале `src/main.cpp`:
